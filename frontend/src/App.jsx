@@ -1,122 +1,60 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useEffect, useState } from 'react'
+import { initialiseCsrf, loadCurrentUser, logout } from './api'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
+function LoginPage() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+    <main className="auth-page">
+      <section className="auth-card">
+        <h1>Welcome to ProMe</h1>
+        <p>Sign in securely with your existing account.</p>
+        <div className="login-actions">
+          <a href={`${apiUrl}/oauth2/authorization/google`}>Continue with Google</a>
+          <a href={`${apiUrl}/oauth2/authorization/github`}>Continue with GitHub</a>
         </div>
       </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    </main>
   )
+}
+
+function Profile({ user, onLogout }) {
+  return (
+    <main className="profile-page">
+      <section className="profile-card">
+        {user.profileImageUrl && <img src={user.profileImageUrl} alt="" className="avatar" />}
+        <h1>{user.displayName}</h1>
+        <p>{user.email || 'Email not provided by provider'}</p>
+        <div className="profile-actions">
+          <a href={`${apiUrl}/api/auth/link/google`}>Link Google account</a>
+          <a href={`${apiUrl}/api/auth/link/github`}>Link GitHub account</a>
+          <button type="button" onClick={onLogout}>Log out</button>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+function App() {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    initialiseCsrf()
+      .then(() => loadCurrentUser())
+      .then(setUser)
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false))
+  }, [])
+
+  async function handleLogout() {
+    await logout()
+    setUser(null)
+  }
+
+  if (loading) return <main className="auth-page"><p>Loading...</p></main>
+  return user ? <Profile user={user} onLogout={handleLogout} /> : <LoginPage />
 }
 
 export default App
