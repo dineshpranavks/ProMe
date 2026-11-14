@@ -52,3 +52,33 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+.dashboard, .details-page { max-width: 1100px; margin: 0 auto; padding: 48px 24px; }
+.dashboard-header, .toolbar, .pagination, .card-actions, .modal-actions { display: flex; align-items: center; gap: 12px; }
+.dashboard-header, .toolbar { justify-content: space-between; margin-bottom: 28px; }
+.dashboard h1, .details-page h1 { margin: 0; }
+.eyebrow, .status, .empty { color: var(--text); }
+.eyebrow { margin: 0; text-transform: uppercase; letter-spacing: .12em; font-size: 12px; }
+.toolbar input, .modal input, .modal textarea { width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 7px; box-sizing: border-box; font: inherit; }
+.toolbar input { max-width: 420px; }
+button, .toolbar button { border: 0; border-radius: 7px; padding: 10px 14px; font: inherit; cursor: pointer; background: var(--text-h); color: var(--bg); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.knowledge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+.knowledge-card { padding: 20px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); }
+.knowledge-card.archived { opacity: .7; }
+.knowledge-card h2 { font-size: 20px; margin: 0 0 8px; }
+.knowledge-card p { min-height: 48px; }
+.card-actions { flex-wrap: wrap; margin-top: 18px; }
+.card-actions a, .card-actions button, .details-page a { font-size: 14px; text-decoration: none; }
+.card-actions a { color: var(--accent); }
+.danger { background: #b42318 !important; color: white; }
+.badge { display: inline-block; margin-top: 10px; padding: 3px 8px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-size: 12px; }
+.pagination { justify-content: center; margin-top: 28px; }
+.modal-backdrop { position: fixed; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(0,0,0,.45); z-index: 2; }
+.modal { width: min(100%, 440px); display: grid; gap: 16px; padding: 28px; border-radius: 12px; background: var(--bg); box-shadow: var(--shadow); }
+.modal h2 { margin: 0; }
+.modal label { display: grid; gap: 6px; font-size: 14px; color: var(--text-h); }
+.modal textarea { min-height: 100px; resize: vertical; }
+.modal-actions { justify-content: flex-end; }
+.error { color: #b42318; }
+@media (max-width: 640px) { .dashboard-header, .toolbar { align-items: stretch; flex-direction: column; } .toolbar input { max-width: none; } }
